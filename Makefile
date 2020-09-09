@@ -249,10 +249,18 @@ ifneq (,$(findstring unix,$(platform)))
    # Generic ARM
    ifneq (,$(findstring armv,$(platform)))
       CPUFLAGS += -DNO_ASM -DARM -D__arm__ -DARM_ASM -DNOSSE
-      WITH_DYNAREC=arm
-      ifneq (,$(findstring neon,$(platform)))
-         CPUFLAGS += -D__NEON_OPT -mfpu=neon
-         HAVE_NEON = 1
+      ifeq ($(ARCH), aarch64)
+         WITH_DYNAREC=aarch64
+	 ifneq (,$(findstring neon,$(platform)))
+            CPUFLAGS += -D__NEON_OPT
+            HAVE_NEON = 1
+         endif
+      else
+         WITH_DYNAREC=arm
+         ifneq (,$(findstring neon,$(platform)))
+            CPUFLAGS += -D__NEON_OPT -mfpu=neon
+            HAVE_NEON = 1
+         endif
       endif
       PLATFORM_EXT := unix
    endif
